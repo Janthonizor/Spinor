@@ -1,6 +1,10 @@
 import numpy as np
 import math as m
 import pyvista as pv
+import os
+import imageio
+from PIL import Image
+import re
 
 def sphere2cart(r, theta, phi):
     x = r * np.cos(theta) * np.sin(phi)
@@ -79,3 +83,24 @@ for frame in range(num_frames):
     
     plotter.screenshot(f"frame_{frame}")
     plotter.clear()
+
+image_dir = ''
+
+image_files = [f for f in os.listdir(image_dir) if f.endswith('.png')]
+image_files.sort(key=lambda x: int(re.search(r'\d+', x).group()))
+images = []
+
+for filename in image_files:
+    image_path = os.path.join(image_dir, filename)
+    img = Image.open(image_path)
+    images.append(img.copy()) 
+    img.close()
+
+output_video = ''
+
+fps = 30
+#frame_duration = 1/fps
+#imageio.mimsave(output_gif, images, fps = fps, duration = frame_duration)
+images.extend(images)
+imageio.mimsave(output_video, images, format='FFMPEG', fps=fps)
+print(f'video saved with {fps} fps.')
